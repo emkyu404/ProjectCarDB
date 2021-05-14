@@ -4,7 +4,7 @@ import Database.DataAccess;
 
 
 public class Appli {
-	public void main(String[] args) {
+	public static void main(String[] args) {
 		String url = "jdbc:MYSQL://localhost/carDB";
 		String usr = "root";
 		String pas = "";
