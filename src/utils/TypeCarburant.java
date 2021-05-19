@@ -1,9 +1,9 @@
 package utils;
 
 public enum TypeCarburant {
-	ELECTRIQUE,
-	GAZOLE,
-	ESSENCE,
-	GPL,
-	SP95
+	Electrique,
+	Gazole,
+	Essence,
+	Gpl,
+	Sp95
 }
