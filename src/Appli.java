@@ -1,5 +1,3 @@
-import java.sql.Connection;
-
 import Database.DataAccess;
 
 
@@ -11,5 +9,7 @@ public class Appli {
 		
 		
 		DataAccess da = new DataAccess(url, usr, pas);
+		
+		da.getVehicules();
 	}
 }
