@@ -58,6 +58,10 @@ public class Louer {
 			return false;
 		return true;
 	}
+	
+	/*public long getDureeLocation() {
+		return dateFin
+	}*/
 
 	
 	
