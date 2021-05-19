@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class PFidelite {
 	private int idPFidelite;
 	private String description;
-	private int duree; // durée en jour;
+	private int duree; // durée en année;
 	private float prix;
 	private float tauxR; //0 à 1;
 	
@@ -19,6 +19,30 @@ public class PFidelite {
 		this.tauxR = tauxR;
 		
 		pfidelites.put(idPFidelite, this);
+	}
+
+	public int getIdPFidelite() {
+		return idPFidelite;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public int getDuree() {
+		return duree;
+	}
+
+	public float getPrix() {
+		return prix;
+	}
+
+	public float getTauxR() {
+		return tauxR;
+	}
+
+	public static HashMap<Integer, PFidelite> getPfidelites() {
+		return pfidelites;
 	}
 
 }

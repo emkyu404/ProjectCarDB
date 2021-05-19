@@ -3,6 +3,8 @@ package model;
 import java.sql.Date;
 import java.util.ArrayList;
 
+import utils.DateCalculator;
+
 public class Louer {
 	private int idVehicule;
 	private int idClient;
@@ -59,10 +61,25 @@ public class Louer {
 		return true;
 	}
 	
-	/*public long getDureeLocation() {
-		return dateFin
-	}*/
-
+	public Vehicule getVehicule() {
+		return Vehicule.vehicules.get(this.idVehicule);
+	}
+	
+	public Client getClient() {
+		return Client.clients.get(this.idClient);
+	}
+	
+	public int getDureeLocation() {
+		return DateCalculator.numberOfDays(this.dateDebut, this.dateFin);
+	}
+	
+	public Date getDateDebut(){
+		return this.dateDebut;
+	}
+	
+	public Date getDateFin() {
+		return this.dateFin;
+	}
 	
 	
 }

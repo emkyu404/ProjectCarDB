@@ -18,4 +18,24 @@ public class Categorie {
 		
 		categories.put(idCategorie, this);
 	}
+
+	public int getIdCategorie() {
+		return idCategorie;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public float getTarifJ() {
+		return tarifJ;
+	}
+
+	public float getCaution() {
+		return caution;
+	}
+
+	public static HashMap<Integer, Categorie> getCategories() {
+		return categories;
+	}
 }

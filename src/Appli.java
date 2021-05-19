@@ -13,8 +13,5 @@ public class Appli {
 		
 		
 		DataAccess da = new DataAccess(url, usr, pas);
-		
-	
-		
 	}
 }
