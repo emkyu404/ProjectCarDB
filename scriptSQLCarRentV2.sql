@@ -113,7 +113,7 @@ CREATE TABLE Categorie(
         label       Varchar (10) NOT NULL ,
         tarifJ      DECIMAL (15,3)  NOT NULL ,
         caution     DECIMAL (15,3)  NOT NULL
-	,CONSTRAINT Categorie_PK PRIMARY KEY (idCategorie)
+	,CONSTRAINT Categorie_PK PRIMARY KEY (idCategorie,label)
 )ENGINE=InnoDB;
 
 
