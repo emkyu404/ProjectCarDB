@@ -2,6 +2,8 @@
 import java.sql.Connection;
 import java.sql.Date;
 import Database.DataAccess;
+import model.Categorie;
+import model.Vehicule;
 import utils.DateCalculator;
 
 
@@ -13,6 +15,11 @@ public class Appli {
 		
 		
 		DataAccess da = new DataAccess(url, usr, pas);
-		System.out.println(da.getVehicules());
+		da.getCategories();
+		System.out.println(da.getClientRenting());
+		da.getVehicules();
+		System.out.println(Vehicule.vehicules);
+		Vehicule v = Vehicule.vehicules.get(1);
+		System.out.println(da.getClientWHR(v));
 	}
 }

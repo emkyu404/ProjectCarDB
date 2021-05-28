@@ -106,6 +106,9 @@ public class Vehicule {
 		return idCategorie;
 	}
 
+	public Categorie getCategorie() {
+		return Categorie.getCategorie(this.idCategorie);
+	}
 	public int getIdAgence() {
 		return idAgence;
 	}
@@ -116,8 +119,8 @@ public class Vehicule {
 
 	@Override
 	public String toString() {
-		return "Vehicule [matricule=" + matricule + ", marque=" + marque + ", modele=" + modele + ", climatise="
-				+ climatise + ", typeBoite=" + typeBoite + ", typeCarburant=" + typeCarburant + "]";
+		return "Matricule : " + matricule + "\n Marque : " + marque + "\n Modele : " + modele + "\n Climatise : "
+				+ climatise + "\n Type Boite : " + typeBoite + "\n Type Carburant : " + typeCarburant + "\n Catégorie : " + this.getCategorie().getLabel() + "\n \n";
 	}
 	
 }

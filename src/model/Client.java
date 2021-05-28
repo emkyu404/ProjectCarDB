@@ -8,14 +8,14 @@ public class Client {
 	private String nom;
 	private String prenom;
 	private String email;
-	private String numTelephone;
+	private int numTelephone;
 	private Date dateSouscription;
 	private int idAdresse;
 	private int idPFidelite;
 	
 	public static HashMap<Integer, Client>clients = new HashMap<>();
 	
-	public Client(int idClient, String nom, String prenom, String email, String numTelephone, Date dateSouscription, int idAdresse, int idPfidelite){
+	public Client(int idClient, String nom, String prenom, String email, int numTelephone, Date dateSouscription, int idAdresse, int idPfidelite){
 		this.idClient = idClient;
 		this.nom = nom;
 		this.prenom = prenom;
@@ -27,7 +27,7 @@ public class Client {
 		clients.put(idClient, this);
 	}
 	
-	public Client(int idClient, String nom, String prenom, String email, String numTelephone , int idAdresse) {
+	public Client(int idClient, String nom, String prenom, String email, int numTelephone , int idAdresse) {
 		this(idClient, nom, prenom, email, numTelephone,null, idAdresse, -1);
 	}
 
@@ -47,7 +47,7 @@ public class Client {
 		return email;
 	}
 
-	public String getNumTelephone() {
+	public int getNumTelephone() {
 		return numTelephone;
 	}
 
@@ -65,5 +65,10 @@ public class Client {
 
 	public static HashMap<Integer, Client> getClients() {
 		return clients;
+	}
+	
+	@Override
+	public String toString() {
+		return "Nom : " + nom + "Prenom : " + prenom + "Email : " + email + "Télephone : " + numTelephone;
 	}
 }

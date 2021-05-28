@@ -4,7 +4,7 @@
 
 #-------------------------------------------------------------
 #    Authors : BUI, REINO JOAQUIM, SAID IBRAHIM
-#    Date de création : Mai 2021
+#    Date de crï¿½ation : Mai 2021
 #-------------------------------------------------------------
 
 DROP DATABASE IF EXISTS carDB;
@@ -87,7 +87,7 @@ CREATE TABLE Agence(
 
 
 #------------------------------------------------------------
-# Table: Employé
+# Table: Employï¿½
 #------------------------------------------------------------
 
 CREATE TABLE Employe(
@@ -225,17 +225,28 @@ CREATE TABLE reserver(
 #-- JEU DE TEST --
 
 INSERT INTO ADRESSE(rue, ville, codePostal) VALUES ("Avenue Henri Ginoux", "Montrouge", 92120);
-INSERT INTO CLIENT(nom, prenom, email, numTelephone, idAdresse) VALUES ("Bui", "Minh-Quân", "bmq@gmx.com", 0708099921,1);
+INSERT INTO CLIENT(nom, prenom, email, numTelephone, idAdresse) VALUES ("Bui", "Minh-Quï¿½n", "bmq@gmx.com", 0708099921,1);
+
+
 
 INSERT INTO ADRESSE(rue, ville, codePostal) VALUES ("Avenue de la Paix", "Fresnes", 94260);
 INSERT INTO AGENCE(nom, telephone, coordGPS, idAdresse) VALUES ("RentCar Fresnes", 0142536798, "48.8062236,2.3291225", 2);
 
-INSERT INTO PFidelite(description, duree, prix, tauxR) VALUES ("réduction de 20 %", 30, 5, 0.20);
+INSERT INTO ADRESSE(rue, ville, codePostal) VALUES ("Rue Victor Hugo", "Paris", 75680);
+INSERT INTO CLIENT(nom, prenom, email, numTelephone, idAdresse) VALUES ("Reino", "Anthony", "rja@gmx.com", 0608099921,3);
+
+INSERT INTO PFidelite(description, duree, prix, tauxR) VALUES ("rï¿½duction de 20 %", 30, 5, 0.20);
 
 INSERT INTO CATEGORIE(label, tarifJ, caution) VALUES ("LUXE", 1000, 80000);
 INSERT INTO CATEGORIE(label, tarifJ, caution) VALUES ("CONFORT", 300, 10000);
 INSERT INTO CATEGORIE(label, tarifJ, caution) VALUES ("ECONOMIQUE", 30, 5000);
 INSERT INTO VEHICULE(matricule, marque, modele, kilometrage, climatise, consommationCarburant, typeBoite, typeCarburant, idCategorie, idAgence) VALUES ("UB-235-FB", "Renault", "Zoe", 5000, true, 100, "Automatique","Electrique", 3, 1);
+INSERT INTO VEHICULE(matricule, marque, modele, kilometrage, climatise, consommationCarburant, typeBoite, typeCarburant, idCategorie, idAgence) VALUES ("BC-988-DE", "Tesla", "Modele S", 2000, true, 100, "Automatique","Electrique", 1, 1);
+INSERT INTO VEHICULE(matricule, marque, modele, kilometrage, climatise, consommationCarburant, typeBoite, typeCarburant, idCategorie, idAgence) VALUES ("AC-195-DC", "Renault", "Twizy", 9000, true, 100, "Automatique","Electrique", 3, 1);
+INSERT INTO VEHICULE(matricule, marque, modele, kilometrage, climatise, consommationCarburant, typeBoite, typeCarburant, idCategorie, idAgence) VALUES ("NR-276-VC", "Tesla", "Modele 3", 4000, true, 100, "Automatique","Electrique", 2, 1);
+INSERT INTO VEHICULE(matricule, marque, modele, kilometrage, climatise, consommationCarburant, typeBoite, typeCarburant, idCategorie, idAgence) VALUES ("BG-456-VT", "Toyota", "Avalon", 5000, true, 100, "Manuelle","Essence", 2, 1);
+INSERT INTO VEHICULE(matricule, marque, modele, kilometrage, climatise, consommationCarburant, typeBoite, typeCarburant, idCategorie, idAgence) VALUES ("HG-371-VD", "Ford", "F150", 2000, true, 100, "Manuelle","Essence", 2, 1);
+INSERT INTO LOUER(idVehicule, idClient, dateDebut, dateFin) VALUES (1,1,"2021-05-28", "2021-06-28");
 
 
 CREATE OR REPLACE VIEW clientSL

@@ -38,4 +38,8 @@ public class Categorie {
 	public static HashMap<Integer, Categorie> getCategories() {
 		return categories;
 	}
+	
+	public static Categorie getCategorie(int idCategorie) {
+		return categories.get(idCategorie);
+	}
 }
