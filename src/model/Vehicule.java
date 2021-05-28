@@ -113,4 +113,11 @@ public class Vehicule {
 	public static HashMap<Integer, Vehicule> getVehicules() {
 		return vehicules;
 	}
+
+	@Override
+	public String toString() {
+		return "Vehicule [matricule=" + matricule + ", marque=" + marque + ", modele=" + modele + ", climatise="
+				+ climatise + ", typeBoite=" + typeBoite + ", typeCarburant=" + typeCarburant + "]";
+	}
+	
 }
