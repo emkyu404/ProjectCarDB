@@ -10,8 +10,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import gestion.Devis;
 import model.Categorie;
 import model.Client;
+import model.PFidelite;
 import model.Vehicule;
 
 public class DataAccess {
@@ -54,6 +56,25 @@ public class DataAccess {
 		}
 		
 		return listeCategorie;
+	}
+	
+	public List<PFidelite> getPFidelite(){
+		System.out.println("----- Liste des PFidelite -----");
+		ArrayList<PFidelite> listePFidelites= new ArrayList<>();
+		
+		try {
+			Statement s = conn.createStatement();
+			String sql = "SELECT * FROM PFidelite";
+			ResultSet res = s.executeQuery(sql);
+			
+			while(res.next()) {
+				listePFidelites.add(new PFidelite(res.getInt("idPfidelite"), res.getString("description"), res.getInt("duree"), res.getFloat("prix"), res.getFloat("tauxR")));
+			}
+		} catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+		
+		return listePFidelites;
 	}
 	
 	/* Liste des véhicules disponibles par catégorie */
@@ -251,16 +272,19 @@ public class DataAccess {
 		ArrayList<Vehicule> listeVehicules = new ArrayList();
 		
 		try {
-			String sql = "SELECT * FROM LOUER as L inner join Vehicule as V WHERE L.dateDebut BETWEEN ? AND ? AND L.dateFin BETWEEN ? AND ?";
+			String sql = "SELECT * FROM (LOUER as L inner join Vehicule as V on V.idVehicule = L.idVehicule) inner join Client as C on L.idClient = C.idClient WHERE L.dateRetour BETWEEN ? AND ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setDate(1, debut);
 			ps.setDate(2, fin);
-			ps.setDate(3, debut);
-			ps.setDate(4, fin);
 			ResultSet res = ps.executeQuery();
 			
 			while(res.next()) {
-				listeVehicules.add(new Vehicule(res.getInt("idVehicule"), res.getString("matricule"), res.getString("marque"), res.getString("modele"), res.getInt("kilometrage"), res.getInt("climatise"), res.getInt("consommationCarburant"), res.getString("typeBoite"), res.getString("typeCarburant"), res.getInt("idCategorie"), res.getInt("idAgence")));
+				Vehicule v = new Vehicule(res.getInt("idVehicule"), res.getString("matricule"), res.getString("marque"), res.getString("modele"), res.getInt("kilometrage"), res.getInt("climatise"), res.getInt("consommationCarburant"), res.getString("typeBoite"), res.getString("typeCarburant"), res.getInt("idCategorie"), res.getInt("idAgence"));
+				Client c = new Client(res.getInt("idClient"), res.getString("nom"), res.getString("prenom"), res.getString("email"), res.getInt("numTelephone"), res.getDate("dateSouscription"), res.getInt("idAdresse"), res.getInt("idPFidelite"));
+				Devis d = new Devis(c, v, res.getBoolean("assurance"), res.getBoolean("endommage"), res.getInt("carburantRestant"), res.getDate("dateDebut"), res.getDate("dateFin"), res.getDate("dateRetour"));
+				recette += d.calculFacture();
+				System.out.println(v);
+				System.out.println(c);
 			}
 			
 			for(Vehicule vh : listeVehicules) {

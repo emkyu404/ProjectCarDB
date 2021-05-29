@@ -18,8 +18,10 @@ public class Appli {
 		da.getCategories();
 		System.out.println(da.getClientRenting());
 		da.getVehicules();
+		
+		da.getPFidelite();
 		System.out.println(Vehicule.vehicules);
 		Vehicule v = Vehicule.vehicules.get(1);
-		System.out.println(da.getClientWHNR(v));
+		System.out.println(da.getRecette(new Date(2021-1900,3-1,1), new Date(2021-1900, 4-1, 1)));
 	}
 }

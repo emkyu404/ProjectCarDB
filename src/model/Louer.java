@@ -69,9 +69,7 @@ public class Louer {
 		return Client.clients.get(this.idClient);
 	}
 	
-	public int getDureeLocation() {
-		return DateCalculator.numberOfDays(this.dateDebut, this.dateFin);
-	}
+
 	
 	public Date getDateDebut(){
 		return this.dateDebut;

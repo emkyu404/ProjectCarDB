@@ -20,7 +20,7 @@ public class Vehicule {
 	
 	public static HashMap<Integer, Vehicule>vehicules = new HashMap<>();
 	
-	public Vehicule(int idVehicule, String matricule, String marque, String modele, int kilometrage, int climatise, int consommmationCarburant, String typeBoite, String typeCarburant, int idCategorie, int idAgence) {
+	public Vehicule(int idVehicule, String matricule, String marque, String modele, int kilometrage, int climatise, int consommationCarburant, String typeBoite, String typeCarburant, int idCategorie, int idAgence) {
 		try {
 			this.typeBoite = whichTypeBoite(typeBoite);
 			this.typeCarburant = whichTypeCarburant(typeCarburant);
