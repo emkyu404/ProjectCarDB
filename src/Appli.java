@@ -2,7 +2,9 @@
 import java.sql.Connection;
 import java.sql.Date;
 import Database.DataAccess;
+import model.Adresse;
 import model.Categorie;
+import model.Client;
 import model.Vehicule;
 import utils.DateCalculator;
 
@@ -20,8 +22,6 @@ public class Appli {
 		da.getVehicules();
 		
 		da.getPFidelite();
-		System.out.println(Vehicule.vehicules);
-		Vehicule v = Vehicule.vehicules.get(1);
-		System.out.println(da.getRecette(new Date(2021-1900,3-1,1), new Date(2021-1900, 4-1, 1)));
+		System.out.println(da.getAgenceDispo80());
 	}
 }
