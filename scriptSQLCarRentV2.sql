@@ -185,10 +185,14 @@ CREATE TABLE Chauffeur(
 #------------------------------------------------------------
 
 CREATE TABLE louer(
-        idVehicule Int NOT NULL ,
-        idClient   Int NOT NULL ,
-        dateDebut  Date NOT NULL ,
-        dateFin    Date NOT NULL
+        idVehicule       Int NOT NULL ,
+        idClient         Int NOT NULL ,
+        dateDebut        Date NOT NULL ,
+        dateFin          Date NOT NULL ,
+        assurance        Bool NOT NULL ,
+        endommage        Bool ,
+        carburantRestant Int ,
+        dateRetour       Date NOT NULL
 	,CONSTRAINT louer_PK PRIMARY KEY (idVehicule,idClient,dateDebut,dateFin)
 
 	,CONSTRAINT louer_Vehicule_FK FOREIGN KEY (idVehicule) REFERENCES Vehicule(idVehicule)
@@ -246,7 +250,9 @@ INSERT INTO VEHICULE(matricule, marque, modele, kilometrage, climatise, consomma
 INSERT INTO VEHICULE(matricule, marque, modele, kilometrage, climatise, consommationCarburant, typeBoite, typeCarburant, idCategorie, idAgence) VALUES ("NR-276-VC", "Tesla", "Modele 3", 4000, true, 100, "Automatique","Electrique", 2, 1);
 INSERT INTO VEHICULE(matricule, marque, modele, kilometrage, climatise, consommationCarburant, typeBoite, typeCarburant, idCategorie, idAgence) VALUES ("BG-456-VT", "Toyota", "Avalon", 5000, true, 100, "Manuelle","Essence", 2, 1);
 INSERT INTO VEHICULE(matricule, marque, modele, kilometrage, climatise, consommationCarburant, typeBoite, typeCarburant, idCategorie, idAgence) VALUES ("HG-371-VD", "Ford", "F150", 2000, true, 100, "Manuelle","Essence", 2, 1);
-INSERT INTO LOUER(idVehicule, idClient, dateDebut, dateFin) VALUES (1,1,"2021-05-28", "2021-06-28");
+INSERT INTO LOUER(idVehicule, idClient, dateDebut, dateFin, assurance, endommage, carburantRestant, dateRetour) VALUES (1,1,"2021-04-28", "2021-05-28", 1, 0, 60, "2021-05-28");
+INSERT INTO LOUER(idVehicule, idClient, dateDebut, dateFin, assurance, endommage, carburantRestant, dateRetour) VALUES (1,1,"2021-03-28", "2021-04-28", 1, 0, 40, "2021-04-30");
+INSERT INTO LOUER(idVehicule, idClient, dateDebut, dateFin, assurance, endommage, carburantRestant, dateRetour) VALUES (1,1,"2021-02-22", "2021-03-28", 1, 0, 40, "2021-03-30");
 
 
 CREATE OR REPLACE VIEW clientSL

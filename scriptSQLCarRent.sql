@@ -146,10 +146,15 @@ CREATE TABLE Vehicule(
 #------------------------------------------------------------
 
 CREATE TABLE louer(
-        idVehicule Int NOT NULL ,
-        idClient   Int NOT NULL ,
-        dateDebut  Date NOT NULL ,
-        dateFin    Date NOT NULL
+        idVehicule       Int NOT NULL ,
+        idClient         Int NOT NULL ,
+        dateDebut        Date NOT NULL ,
+        dateFin          Date NOT NULL ,
+        assurance        Bool NOT NULL ,
+        endommage        Bool ,
+        carburantRestant Int ,
+        locationTermine  Bool NOT NULL ,
+        dateRetour       Date NOT NULL
 	,CONSTRAINT louer_PK PRIMARY KEY (idVehicule,idClient)
 
 	,CONSTRAINT louer_Vehicule_FK FOREIGN KEY (idVehicule) REFERENCES Vehicule(idVehicule)

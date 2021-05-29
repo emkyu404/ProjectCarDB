@@ -1,6 +1,7 @@
 package Database;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -222,6 +223,53 @@ public class DataAccess {
 		}
 		
 		return listeClients;
+	}
+	
+	/* WHNR => Who has never rent */
+	public List<Client> getClientWHNR(Vehicule v){
+		System.out.println("----- Liste des clients qui n'ont jamais loués -----");
+		ArrayList<Client> listeClients = new ArrayList<>();
+		
+		try {
+			Statement s = conn.createStatement();
+			String sql = "SELECT * from CLIENT WHERE idClient NOT IN (SELECT idClient FROM LOUER);";
+			ResultSet res = s.executeQuery(sql);
+			while(res.next()) {
+				listeClients.add(new Client(res.getInt("idClient"), res.getString("nom"), res.getString("prenom"), res.getString("email"), res.getInt("numTelephone"), res.getDate("dateSouscription"), res.getInt("idAdresse"), res.getInt("idPFidelite")));
+			}
+		} catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+		
+		return listeClients;
+	}
+	
+	public float getRecette(Date debut, Date fin) {
+		System.out.println("----- Montant global des recettes de l'entreprise de gestion en euros pour les locations entre " + debut + " et " + fin + " -----");
+		float recette = 0;
+		
+		ArrayList<Vehicule> listeVehicules = new ArrayList();
+		
+		try {
+			String sql = "SELECT * FROM LOUER as L inner join Vehicule as V WHERE L.dateDebut BETWEEN ? AND ? AND L.dateFin BETWEEN ? AND ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setDate(1, debut);
+			ps.setDate(2, fin);
+			ps.setDate(3, debut);
+			ps.setDate(4, fin);
+			ResultSet res = ps.executeQuery();
+			
+			while(res.next()) {
+				listeVehicules.add(new Vehicule(res.getInt("idVehicule"), res.getString("matricule"), res.getString("marque"), res.getString("modele"), res.getInt("kilometrage"), res.getInt("climatise"), res.getInt("consommationCarburant"), res.getString("typeBoite"), res.getString("typeCarburant"), res.getInt("idCategorie"), res.getInt("idAgence")));
+			}
+			
+			for(Vehicule vh : listeVehicules) {
+				
+			}
+		}catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+		return recette;
 	}
 	
 }

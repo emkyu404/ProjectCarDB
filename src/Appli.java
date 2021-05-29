@@ -20,6 +20,6 @@ public class Appli {
 		da.getVehicules();
 		System.out.println(Vehicule.vehicules);
 		Vehicule v = Vehicule.vehicules.get(1);
-		System.out.println(da.getClientWHR(v));
+		System.out.println(da.getClientWHNR(v));
 	}
 }

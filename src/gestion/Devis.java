@@ -24,21 +24,16 @@ public class Devis {
 	private final int tauxRetardJ = 500;
 	private final int prixRemiseEnEtat = 5000;
 	
-	public Devis(Louer l, boolean a, boolean e, int carburantRestant) {
-		this.client = l.getClient();
-		this.vehicule = l.getVehicule();
-		this.duree = l.getDureeLocation();
+	public Devis(Client c, Vehicule v, boolean a, boolean e, int carburantRestant, Date dateD, Date dateF) {
+		this.client = c;
+		this.vehicule = v;
+		this.duree = DateCalculator.numberOfDays(dateD, dateF);
 		this.assurance = a;
 		this.endommage = e;
 		this.carburantRestant = carburantRestant;
-		this.dateD = l.getDateDebut();
-		this.dateF = l.getDateFin();
+		this.dateD = dateD;
+		this.dateF = dateF;
 	}
-	
-	public Devis(Louer l, boolean e, int carburantRestant) {
-		this(l,false,e, carburantRestant);
-	}
-	
 	
 	public float calculFacture() {
 		float res = 0;
