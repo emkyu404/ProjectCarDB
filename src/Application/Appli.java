@@ -41,9 +41,9 @@ public class Appli {
 			System.out.println("Que souhaitez vous faire ? (indiquer un chiffre) :");
 			System.out.println("");
 			
-			System.out.println("1 - Gestion des devis et locations");
-			System.out.println("2 - Gestion des clients");
-			System.out.println("3 - Gestion des ressources");	
+			System.out.println("1: Gestion des devis et locations");
+			System.out.println("2: Gestion des clients");
+			System.out.println("3: Gestion des ressources");	
 			System.out.println("0: Sortie du programme");
 			
 			String input = sc.nextLine();
@@ -95,12 +95,14 @@ public class Appli {
 		while(!exit) {
 			System.out.println("Que souhaitez-vous faire ?");
 			System.out.println("");
-			
+			System.out.println("1: Ajouter un nouveau client");
+			System.out.println("2: Modifier les informations d'un client");
+			System.out.println("3: Supprimer les informations d'un client");
 			System.out.println("4: Lister les véhicules disponibles par catégorie");
 			System.out.println("5: Rechercher un véhicule par marque");
 			System.out.println("6: Lister tous les véhicules en cours de location");
 			System.out.println("7: Louer un véhicule");
-			System.out.println("0: Annulation");
+			System.out.println("0: Retour");
 			
 			String input = sc.nextLine();
 			
@@ -156,7 +158,7 @@ public class Appli {
 			System.out.println("5: Rechercher un client par son nom");
 			System.out.println("6: Rechercher tous les clients ayant une location en cours");
 			System.out.println("7: Rechercher tous les clients ayant loués un véhicule donné");
-			System.out.println("0: Annulation");
+			System.out.println("0: Retour");
 			
 			String input = sc.nextLine();
 			
