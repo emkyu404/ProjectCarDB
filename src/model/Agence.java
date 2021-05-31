@@ -26,5 +26,29 @@ public class Agence {
 		return "Agence [idAgence=" + idAgence + ", nom=" + nom + ", telephone=" + telephone + ", coordGPS=" + coordGPS
 				+ ", idAdresse=" + idAdresse + "]";
 	}
+
+	public String getNom() {
+		return nom;
+	}
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
+	public int getIdAdresse() {
+		return idAdresse;
+	}
+
+	public void setIdAdresse(int idAdresse) {
+		this.idAdresse = idAdresse;
+	}
+
+	public int getIdAgence() {
+		return idAgence;
+	}
+
+	public void setIdAgence(int idAgence) {
+		this.idAgence = idAgence;
+	}
 	
 }
