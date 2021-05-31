@@ -206,8 +206,10 @@ CREATE TABLE louer(
 
 CREATE TABLE reserver(
         idVehicule Int NOT NULL ,
-        idClient   Int NOT NULL
-	,CONSTRAINT reserver_PK PRIMARY KEY (idVehicule,idClient)
+        idClient   Int NOT NULL,
+        dateDebut        Date NOT NULL ,
+        dateFin          Date NOT NULL 
+	,CONSTRAINT reserver_PK PRIMARY KEY (idVehicule,idClient,dateDebut,dateFin)
 
 	,CONSTRAINT reserver_Vehicule_FK FOREIGN KEY (idVehicule) REFERENCES Vehicule(idVehicule)
 	,CONSTRAINT reserver_Client0_FK FOREIGN KEY (idClient) REFERENCES Client(idClient)

@@ -24,19 +24,23 @@ public class DataAccess {
 	
 	private Connection conn;
 	
-	public DataAccess(String url, String usr, String pas) {
+	public DataAccess(String url, String usr, String pas) throws SQLException{
 		this.url = url;
 		this.usr = usr;
 		this.pas = pas;
+		try {
 		DBConnection();
+		}catch(SQLException e){
+			throw e;
+		}
 	}
 	
-	private void DBConnection() {
+	private void DBConnection() throws SQLException {
 		try {
 			this.conn = DriverManager.getConnection(url, usr, pas);
 			System.out.println("Connexion à la base de donnée réussi");
 		}catch(SQLException e) {
-			System.err.println("ERREUR : " + e.getMessage());
+			throw e;
 		}
 	}
 	
@@ -174,13 +178,39 @@ public class DataAccess {
 	
 	/* Liste des véhicules disponibles par catégorie */
 	public List<Vehicule> getVehiculesAvailable(){
-		System.out.println("----- Liste des véhicules -----");
+		System.out.println("----- Liste des véhicules disponible par catégorie -----");
 		ArrayList<Vehicule> listeVehicules = new ArrayList<>();
 		
 		try {
-			Statement s = conn.createStatement();
-			String sql = "SELECT * from VEHICULE WHERE idVehicule NOT IN (SELECT idVehicule FROM LOUER WHERE CURDATE() BETWEEN dateDebut and dateFin) ORDER BY idCategorie";
+			String sql = "SELECT * from VEHICULE WHERE idVehicule NOT IN (SELECT idVehicule FROM LOUER WHERE CURDATE() BETWEEN dateDebut and dateFin) AND CURDATE() NOT IN (SELECT idVehicule FROM RESERVER WHERE CURDATE() BETWEEN dateDebut and dateFin) ORDER BY idCategorie";
+			PreparedStatement s = conn.prepareStatement(sql);
 			ResultSet res = s.executeQuery(sql);
+			
+			while(res.next()) {
+				listeVehicules.add(new Vehicule(res.getInt("idVehicule"), res.getString("matricule"), res.getString("marque"), res.getString("modele"), res.getInt("kilometrage"), res.getInt("climatise"), res.getInt("consommationCarburant"), res.getString("typeBoite"), res.getString("typeCarburant"), res.getInt("idCategorie"), res.getInt("idAgence")));
+			}
+		} catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+		
+		return listeVehicules;
+	}
+	
+	/* Liste des véhicules disponibles à la réservation en fonction de la catégorie et des dates indiqués */
+	public List<Vehicule> getVehiculesAvailableReservation(Date dateD, Date dateF, int idCat){
+		System.out.println("----- Liste des véhicules disponible par catégorie du "+ dateD + " au " + dateF + "-----");
+		ArrayList<Vehicule> listeVehicules = new ArrayList<>();
+		this.getCategories(); // Mise à jour des catégories dans l'application
+		
+		try {
+			String sql = "SELECT * from VEHICULE WHERE idVehicule NOT IN (SELECT idVehicule FROM LOUER WHERE dateDebut BETWEEN ? and ?) AND idVehicule NOT IN (SELECT idVehicule FROM RESERVER WHERE dateDebut BETWEEN ? and ?) AND idVehicule NOT IN (SELECT idVehicule FROM LOUER WHERE dateFin BETWEEN ? and ?) AND idVehicule NOT IN (SELECT idVehicule FROM RESERVER WHERE dateFin BETWEEN ? and ?) AND idCategorie = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setDate(1, dateD);
+			ps.setDate(2, dateF);
+			ps.setDate(3, dateD);
+			ps.setDate(4, dateF);
+			ps.setInt(5, idCat);
+			ResultSet res = ps.executeQuery(sql);
 			
 			while(res.next()) {
 				listeVehicules.add(new Vehicule(res.getInt("idVehicule"), res.getString("matricule"), res.getString("marque"), res.getString("modele"), res.getInt("kilometrage"), res.getInt("climatise"), res.getInt("consommationCarburant"), res.getString("typeBoite"), res.getString("typeCarburant"), res.getInt("idCategorie"), res.getInt("idAgence")));
@@ -232,6 +262,23 @@ public class DataAccess {
 		}
 		
 		return listeVehicules;
+	}
+	
+	public void addReservation(int idC, int idV, Date dateD, Date dateF) {
+		System.out.println("----- Ajout d'une réservation -----");
+		
+		try {
+			String sql = "INSERT INTO RESERVER (idClient, idVehicule, dateDebut, dateFin) VALUES (?,?,?,?)";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, idC);
+			ps.setInt(2, idV);
+			ps.setDate(3, dateD);
+			ps.setDate(4, dateF);
+			int row = ps.executeUpdate();
+			System.out.println("Ajout de la réservation du véhicule " + idV + " pour le client "+ idC + " du " + dateD + " au " + dateF);
+		} catch(SQLException e){
+			System.out.println("Erreur : " + e.getMessage());
+		}
 	}
 	
 	/*

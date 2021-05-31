@@ -2,6 +2,8 @@ package Application;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -23,6 +25,7 @@ public class Appli {
 		String usr = "root";
 		String pas = "";
 		
+		try {
 		DataAccess da = new DataAccess(url, usr, pas);
 		
 		Scanner sc = new Scanner(System.in);
@@ -71,6 +74,11 @@ public class Appli {
 		
 		System.out.println("Fin du programme.");
 		System.exit(1);
+		}catch(SQLException e) {
+			System.err.println("L'application Rentcar n'a pas pu se connecter à la base de donnée. \n Erreur : \n");
+			System.err.println(e.getMessage());
+			System.exit(1);
+		}
 	}
 	
 	/*********************************** APPLI RESSOURCE ***********************************/
@@ -88,6 +96,7 @@ public class Appli {
 			System.out.println("1: Lister les véhicules disponibles par catégorie");
 			System.out.println("2: Rechercher un véhicule par marque");
 			System.out.println("3: Lister tous les véhicules en cours de location");
+			System.out.println("4: Louer un véhicule");
 			System.out.println("0: Annulation");
 			
 			String input = sc.nextLine();
@@ -193,6 +202,129 @@ public class Appli {
 		/*Tout ce qui est reservation et location d'un vehicule*/
 	}
 	
+	/* Réservation d'un véhicule */
+	private static void RéservationVehicule(Scanner sc, DataAccess da) {
+		System.out.println(Appli.SEPARATOR);
+		System.out.println("Reservation d'un véhicule");
+		System.out.println(Appli.SEPARATOR);
+		boolean exit = false;
+		
+		
+		while(!exit) {
+			System.out.println("Veuillez choisir une catégorie de véhicule");
+			System.out.println("");
+			System.out.println("1: LUXE");
+			System.out.println("2: CONFORT");
+			System.out.println("3: ECONOMIQUE");
+			System.out.println("0: Annulation");
+			
+			int idVehicule, idCat = 0;
+			
+			String input = sc.nextLine();
+			
+			switch(input) {
+				case "1" : 
+							idCat = 1;
+							break;
+					
+				case "2" : 
+							idCat = 2;
+							break;
+				case "3" : 
+							idCat = 3;
+						    break;
+				    
+				case "0" :  
+							exit = true;
+							break;
+							
+				default :  	
+							Appli.ErreurMenu();
+							break;
+			}
+			
+			if(!exit) {
+			/* Indication des dates de réservations */
+			System.out.println("");
+			System.out.println("Veuillez indiquer les dates de réservations (début et fin) souhaitées au format suivant : YYYY-MM-DD/YYYY-MM-DD");
+			System.out.println("");
+			input = sc.nextLine();
+			
+			String[] dates = input.split("/");
+			Date dateD = Appli.DateParser(dates[0]);
+			Date dateF = Appli.DateParser(dates[1]);
+			
+				if(idCat != 0) {
+					List<Vehicule> listeVehiculesDispo = da.getVehiculesAvailableReservation(dateF, dateF, idCat);
+					if(listeVehiculesDispo.size() > 0) {
+						
+						System.out.println("");
+						System.out.println("Voici les véhicules disponibles");
+						System.out.println("");
+						for(Vehicule v : listeVehiculesDispo) {
+							System.out.println(v.getIdVehicule() + ": [Marque : " + v.getMarque() + " - Modele : " + v.getModele() + "]");
+						}
+						
+						boolean exit2 = false;
+						System.out.println("");
+						System.out.println("Veuillez choisir un véhicule à réserver (indiquez l'ID associé)");
+						System.out.println("");
+						while(!exit2) {
+							input = sc.nextLine();
+							
+							int idV = Integer.parseInt(input);
+							
+							if(idV > 0) {
+								exit2 = true;
+								System.out.println("");
+								System.out.println("Indiquez votre ID Client");
+								System.out.println("");
+								
+								input = sc.nextLine();
+								int idC = Integer.parseInt(input);
+								da.addReservation(idC, idV, dateD, dateF);
+								
+							}else {
+									System.out.println("");
+									System.out.println("L'ID indiqué est incorrect, veuillez recommencer");
+									System.out.println("");
+							}
+						}
+						
+						
+					}else {
+						System.out.println("Aucun véhicule n'est disponible selon les critères demandés");
+					}
+				}
+				
+				
+			}
+			
+			
+			
+		}
+		
+	}
+	
+	public static void LocationVehicule() {
+		// Indiquer le couple idc, idv, dated, datef pour créer un tuple dans la table louer parmis
+		System.out.println("");
+		System.out.println("Locati");
+		System.out.println("");
+		
+	}
+	
+	public static void RetourVehicule() {
+		// Indiquer le couple idc, idv, dated, datef etc ... pour terminer la location (modification de la dateRetour)
+		// Affichage du montant de la location en +
+	}
+	
+	public static void AnnulationReservation() {
+		
+	}
+	
+	
+	
 	/**************************************************************************************/
 	
 	public static void promptEnterKey() {
@@ -206,5 +338,13 @@ public class Appli {
 		  System.out.println("Erreur : La commande indiqué ne correspond pas à une action possible.");
 		  System.out.println("Veuillez réessayer et choisir parmis les options possibles.");
 		  System.out.println("");
+	}
+	
+	public static Date DateParser(String s) {
+		String[] date = s.split("-");
+		int year = Integer.parseInt(date[0]) - 1900;
+		int month = Integer.parseInt(date[1]) - 1;
+		int day = Integer.parseInt(date[2]);;
+		return new Date(year,month,day);
 	}
 }
