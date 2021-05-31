@@ -17,4 +17,21 @@ public class Adresse {
 		this.codePostal = codePostal;
 		adresses.put(idAdresse, this);
 	}
+
+	public int getIdAdresse() {
+		return idAdresse;
+	}
+
+	public String getRue() {
+		return rue;
+	}
+
+	public String getVille() {
+		return ville;
+	}
+
+	public int getCodePostal() {
+		return codePostal;
+	}
+
 }

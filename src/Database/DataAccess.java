@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gestion.Devis;
+import model.Adresse;
 import model.Agence;
 import model.Categorie;
 import model.Client;
@@ -310,6 +311,47 @@ public class DataAccess {
 		}
 	}
 	
+	/* Ajout d'une nouvelle adresse */
+	public void addAdresse(Adresse ad) {
+		try {
+			String sql = "INSERT INTO ADRESSE (rue, ville, codePostal) VALUES (?,?,?)";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, ad.getRue());
+			ps.setString(2, ad.getVille());
+			ps.setInt(3, ad.getCodePostal());
+			
+			int row = ps.executeUpdate();
+			
+			System.out.println("L'adresse " + ad.getRue() + " vient d'être ajoutée");
+			
+		} catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+	}
+	
+	/* recuperation de l'id d'une adresse dans la base de donnée */
+	public int getIdAdresse(Adresse ad){	
+		int idAd = 0;
+		try {
+			String sql = "SELECT idAdresse from Adresse WHERE rue = ? AND ville = ? AND codePostal = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, ad.getRue());
+			ps.setString(2, ad.getVille());
+			ps.setInt(3, ad.getCodePostal());
+			
+			ResultSet res = ps.executeQuery();
+			if(res.next()) {
+				idAd = res.getInt("IdAdresse");
+			}
+			
+			
+		} catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+		
+		return idAd;
+	}
+	
 	/* Suppression d'un client */
 	public void deleteClient(Client c) {	
 		try {
@@ -324,6 +366,39 @@ public class DataAccess {
 		} catch(SQLException e) {
 			System.out.println("Erreur : " + e.getMessage());
 		}
+	}
+	
+	/* Suppression d'une adresse */
+	public void deleteAdresse(Adresse ad) {
+		try {
+			String sql = "DELETE FROM ADRESSE WHERE idAdresse = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, ad.getIdAdresse());
+			
+			int row = ps.executeUpdate();
+			
+		} catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+	}
+	
+	/* recuperation de toutes les adresses */
+	public List<Adresse> getAdresses(){
+		ArrayList<Adresse> listeAdresses = new ArrayList<>();
+		
+		try {
+			Statement s = conn.createStatement();
+			String sql = "SELECT * from ADRESSE";
+			ResultSet res = s.executeQuery(sql);
+			
+			while(res.next()) {
+				listeAdresses.add(new Adresse(res.getInt("idAdresse"),res.getString("rue"),res.getString("ville"),res.getInt("codePostal")));
+			}
+		} catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+		
+		return listeAdresses;
 	}
 	
 	/* Modification d'un véhicule */
@@ -352,6 +427,7 @@ public class DataAccess {
 			System.out.println("Erreur : " + e.getMessage());
 		}
 	}
+	
 	public List<Client> getClient(){
 		System.out.println("----- Liste des clients -----");
 		ArrayList<Client> listeClients = new ArrayList<>();

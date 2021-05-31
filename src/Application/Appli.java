@@ -93,25 +93,27 @@ public class Appli {
 		while(!exit) {
 			System.out.println("Que souhaitez-vous faire ?");
 			System.out.println("");
-			System.out.println("1: Lister les véhicules disponibles par catégorie");
-			System.out.println("2: Rechercher un véhicule par marque");
-			System.out.println("3: Lister tous les véhicules en cours de location");
-			System.out.println("4: Louer un véhicule");
+			
+			System.out.println("4: Lister les véhicules disponibles par catégorie");
+			System.out.println("5: Rechercher un véhicule par marque");
+			System.out.println("6: Lister tous les véhicules en cours de location");
+			System.out.println("7: Louer un véhicule");
 			System.out.println("0: Annulation");
 			
 			String input = sc.nextLine();
 			
 			switch(input) {
-				case "1" : 
+				
+				case "4" : 
 							da.getVehiculesAvailable();
 							break;
 					
-				case "2" : 
+				case "5" : 
 							System.out.println("Indiquez une marque");
 							String marque = sc.nextLine();
 							da.getVehiculesByMarque(marque);
 							break;
-				case "3" : 
+				case "6" : 
 						    da.getVehiculesBeingRent();
 						    break;
 				
@@ -144,29 +146,73 @@ public class Appli {
 		while(!exit) {
 			System.out.println("Que souhaitez-vous faire ?");
 			System.out.println("");
-			System.out.println("1: Liste des clients par ordre alphabétique");
-			System.out.println("2: Rechercher un client par son nom");
-			System.out.println("3: Rechercher tous les clients ayant une location en cours");
-			System.out.println("4: Rechercher tous les clients ayant loués un véhicule donné");
+			System.out.println("1: Ajouter un nouveau client");
+			System.out.println("2: Modifier les informations d'un client");
+			System.out.println("3: Supprimer les informations d'un client");
+			System.out.println("4: Liste des clients par ordre alphabétique");
+			System.out.println("5: Rechercher un client par son nom");
+			System.out.println("6: Rechercher tous les clients ayant une location en cours");
+			System.out.println("7: Rechercher tous les clients ayant loués un véhicule donné");
 			System.out.println("0: Annulation");
 			
 			String input = sc.nextLine();
 			
 			switch(input) {
 				case "1" : 
-							da.getClient();
+							System.out.println("Indiquez les informations de l'adresse du client avec le format suivant : rue,ville,codePostal");
+							String adresse = sc.nextLine();
+							String[] adresseInfos = adresse.split(",");
+							//idAdresse = 100 est juste un nombre aléatoire car ce n'est pas cet ID qui sera inséré dans la base de donnée
+							Adresse ad = new Adresse(100, adresseInfos[0], adresseInfos[1], Integer.parseInt(adresseInfos[2]));
+							da.addAdresse(ad);
+							
+							
+							System.out.println("Indiquez les informations du nouveau client avec le format suivant : nom,prenom,email,numTelephone");
+							String client = sc.nextLine();
+							String[] clientInfos = client.split(",");
+							int idAdresse = da.getIdAdresse(ad);
+							
+							Client newclient = new Client(100, clientInfos[0], clientInfos[1], clientInfos[2], Integer.parseInt(clientInfos[3]), null, idAdresse,-1);
+							da.addNewClient(newclient);
 							break;
 					
 				case "2" : 
-							System.out.println("Indiquez le nom d'un client");
-							String nom = sc.nextLine();
-							da.getClientByName(nom);
-							break;
+					
 				case "3" : 
+							System.out.println("Indiquez le nom du client que vous voulez supprimer");
+							String nom = sc.nextLine();
+							
+							List<Client> listeClient = da.getClient();
+							List<Adresse> listeAdresse = da.getAdresses();
+							
+							for(Client c : listeClient) {
+								if(nom.equals(c.getNom())) {
+									da.deleteClient(c);
+									
+									for(Adresse adr : listeAdresse) {
+										if(adr.getIdAdresse() == c.getIdAdresse()) {
+											da.deleteAdresse(adr);
+										}
+									}
+								}
+							}
+							
+							
+							break;
+				case "4" : 
+							da.getClient();
+							break;
+					
+				case "5" : 
+							System.out.println("Indiquez le nom d'un client");
+							String clientName = sc.nextLine();
+							da.getClientByName(clientName);
+							break;
+				case "6" : 
 						    da.getClientRenting();
 						    break;
 						    
-				case "4" : 
+				case "7" : 
 							System.out.println("Indiquez le modèle du véhicule");
 							String modele = sc.nextLine();
 							List<Vehicule> listeVehicules = da.getVehicules();
