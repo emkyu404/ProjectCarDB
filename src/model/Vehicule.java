@@ -40,7 +40,9 @@ public class Vehicule {
 			this.idCategorie = idCategorie;
 			this.idAgence = idAgence;
 			
-			vehicules.put(idVehicule, this);
+			if(idVehicule > 0) {
+				vehicules.put(idVehicule, this);
+			}
 			
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
@@ -55,14 +57,14 @@ public class Vehicule {
 		}
 	}
 	
-	private TypeCarburant whichTypeCarburant(String typeBoite) throws Exception {
-		switch(typeBoite) {
+	private TypeCarburant whichTypeCarburant(String typeCarburant) throws Exception {
+		switch(typeCarburant) {
 			case "Electrique" : return TypeCarburant.Electrique;
 			case "Gazole" : return TypeCarburant.Gazole;
 			case "Essence" : return TypeCarburant.Essence;
 			case "Gpl" : return TypeCarburant.Gpl;
 			case "Sp95" : return TypeCarburant.Sp95;
-			default : throw new Exception("Le type de boite indiqué est incorrect");
+			default : throw new Exception("Le type de carburant indiqué est incorrect");
 		}
 	}
 
@@ -121,6 +123,54 @@ public class Vehicule {
 	public String toString() {
 		return "Matricule : " + matricule + "\n Marque : " + marque + "\n Modele : " + modele + "\n Climatise : "
 				+ climatise + "\n Type Boite : " + typeBoite + "\n Type Carburant : " + typeCarburant + "\n Catégorie : " + this.getCategorie().getLabel() + "\n \n";
+	}
+
+	public void setIdVehicule(int idVehicule) {
+		this.idVehicule = idVehicule;
+	}
+
+	public void setMatricule(String matricule) {
+		this.matricule = matricule;
+	}
+
+	public void setMarque(String marque) {
+		this.marque = marque;
+	}
+
+	public void setModele(String modele) {
+		this.modele = modele;
+	}
+
+	public void setKilometrage(int kilometrage) {
+		this.kilometrage = kilometrage;
+	}
+
+	public void setClimatise(boolean climatise) {
+		this.climatise = climatise;
+	}
+
+	public void setConsommationCarburant(int consommationCarburant) {
+		this.consommationCarburant = consommationCarburant;
+	}
+
+	public void setTypeBoite(TypeBoite typeBoite) {
+		this.typeBoite = typeBoite;
+	}
+
+	public void setTypeCarburant(TypeCarburant typeCarburant) {
+		this.typeCarburant = typeCarburant;
+	}
+
+	public void setIdCategorie(int idCategorie) {
+		this.idCategorie = idCategorie;
+	}
+
+	public void setIdAgence(int idAgence) {
+		this.idAgence = idAgence;
+	}
+
+	public static void setVehicules(HashMap<Integer, Vehicule> vehicules) {
+		Vehicule.vehicules = vehicules;
 	}
 	
 }

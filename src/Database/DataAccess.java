@@ -46,7 +46,6 @@ public class DataAccess {
 	}
 	
 	public List<Categorie> getCategories(){
-		System.out.println("----- Liste des catégories -----");
 		ArrayList<Categorie> listeCategorie = new ArrayList<>();
 		
 		try {
@@ -62,6 +61,24 @@ public class DataAccess {
 		}
 		
 		return listeCategorie;
+	}
+	
+	public List<Agence> getAgences(){
+		ArrayList<Agence> listeAgence = new ArrayList<>();
+		
+		try {
+			Statement s = conn.createStatement();
+			String sql = "SELECT * FROM Agence";
+			ResultSet res = s.executeQuery(sql);
+			
+			while(res.next()) {
+				listeAgence.add(new Agence(res.getInt("idAgence"), res.getString("nom"), res.getInt("telephone"), res.getString("coordGPS"), res.getInt("idAdresse")));
+			}
+		} catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+		
+		return listeAgence;
 	}
 	
 	public List<PFidelite> getPFidelite(){
@@ -133,15 +150,15 @@ public class DataAccess {
 	}
 	
 	/* Suppression d'un véhicule */
-	public void deleteVehicule(Vehicule v) {	
+	public void deleteVehicule(String matricule) {	
 		try {
-			String sql = "DELETE FROM VEHICULE WHERE idVehicule = ?";
+			String sql = "DELETE FROM VEHICULE WHERE matricule = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setInt(1, v.getIdVehicule());
+			ps.setString(1, matricule);
 			
 			int row = ps.executeUpdate();
 			
-			System.out.println("La suppression du véhicule " + v.getMatricule() + " a bien été effectué");
+			System.out.println("La suppression du véhicule de matricule " + matricule+  " a bien été effectué");
 			
 		} catch(SQLException e) {
 			System.out.println("Erreur : " + e.getMessage());
@@ -172,6 +189,25 @@ public class DataAccess {
 		} catch(SQLException e) {
 			System.out.println("Erreur : " + e.getMessage());
 		}
+	}
+	
+	public List<Vehicule> getVehiculeByMatricule(String matricule) {
+		System.out.println("----- Récupération du véhicule de matricule "+ matricule + "------");
+		ArrayList<Vehicule> listeVehicules = new ArrayList();
+		try {
+			String sql = "SELECT * FROM VEHICULE WHERE matricule LIKE ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, matricule);
+			ResultSet res = ps.executeQuery();
+			while(res.next()) {
+				Vehicule v = new Vehicule(res.getInt("idVehicule"), res.getString("matricule"), res.getString("marque"), res.getString("modele"), res.getInt("kilometrage"), res.getInt("climatise"), res.getInt("consommationCarburant"), res.getString("typeBoite"), res.getString("typeCarburant"), res.getInt("idCategorie"), res.getInt("idAgence"));
+				listeVehicules.add(v);
+			}
+		}catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+		
+		return listeVehicules;
 	}
 
 	

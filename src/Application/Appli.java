@@ -10,10 +10,13 @@ import java.util.Scanner;
 
 import Database.DataAccess;
 import model.Adresse;
+import model.Agence;
 import model.Categorie;
 import model.Client;
 import model.Vehicule;
 import utils.DateCalculator;
+import utils.TypeBoite;
+import utils.TypeCarburant;
 
 
 public class Appli {
@@ -27,6 +30,7 @@ public class Appli {
 		
 		try {
 		DataAccess da = new DataAccess(url, usr, pas);
+		
 		
 		Scanner sc = new Scanner(System.in);
 		System.out.println(SEPARATOR);
@@ -95,9 +99,9 @@ public class Appli {
 		while(!exit) {
 			System.out.println("Que souhaitez-vous faire ?");
 			System.out.println("");
-			System.out.println("1: Ajouter un nouveau client");
-			System.out.println("2: Modifier les informations d'un client");
-			System.out.println("3: Supprimer les informations d'un client");
+			System.out.println("1: Ajouter un nouveau véhicule");
+			System.out.println("2: Modifier les informations d'un véhicule");
+			System.out.println("3: Supprimer un véhicule");
 			System.out.println("4: Lister les véhicules disponibles par catégorie");
 			System.out.println("5: Rechercher un véhicule par marque");
 			System.out.println("6: Lister tous les véhicules en cours de location");
@@ -107,6 +111,15 @@ public class Appli {
 			String input = sc.nextLine();
 			
 			switch(input) {
+			
+				case "1" : Appli.ajouterVehicule(sc, da);
+							break;
+							
+				case "2" : Appli.modificationVehicule(sc, da);
+							break;
+				
+				case "3" : Appli.supprimerVehicule(sc, da);
+							break;
 				
 				case "4" : 
 							da.getVehiculesAvailable();
@@ -135,6 +148,315 @@ public class Appli {
 		System.out.println("Fin de la gestion des ressources");
 		System.out.println("");
 		
+	}
+	
+	private static void ajouterVehicule(Scanner sc, DataAccess da) {
+		System.out.println("");
+		System.out.println("Ajout d'un nouveau véhicule");
+		System.out.println("");
+		
+
+		System.out.println("Veuillez choisir la catégorie de véhicule");
+		System.out.println("");
+		System.out.println("1: LUXE");
+		System.out.println("2: CONFORT");
+		System.out.println("3: ECONOMIQUE");
+		System.out.println("0: Annulation");
+		
+		int idCat = 0;
+		
+		String input = sc.nextLine();
+		
+		switch(input) {
+			case "1" : 
+						idCat = 1;
+						break;
+				
+			case "2" : 
+						idCat = 2;
+						break;
+			case "3" : 
+						idCat = 3;
+					    break;
+			    
+			case "0" :  System.out.println("Annulation de l'ajout d'un nouveau véhicule");
+						return;
+						
+			default :  	
+						Appli.ErreurMenu();
+						break;
+		}
+		
+		String matricule, marque, modele;
+		int kilometrage;
+		int climatise = 0;
+		int idAgence = 0;
+		TypeBoite tb = null;
+		TypeCarburant tc = null;
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("Indiquer les informations du véhicule : matricule, marque, modele, kilometrage");
+			System.out.println("ex : UB-235-FB,Renault,Zoe,5000");
+			System.out.println("");
+			
+			input = sc.nextLine();
+			
+			String[] inputs = input.split(",");
+			if(inputs.length == 4) {
+				exit = true;
+				
+				matricule = inputs[0];
+				marque = inputs[1];
+				modele = inputs[2];
+				kilometrage = Integer.parseInt(inputs[3]);
+				boolean exit2 = false;
+				while(!exit2) {
+					System.out.println("");
+					System.out.println("Le véhicule est-il climatisé ? (Y/N)");
+					System.out.println("");
+					
+					input = sc.nextLine();
+					
+					if(input.equals("Y")) {
+						exit2 = true;
+						climatise = 1;
+					}else if (input.equals("N")){
+						exit2 = true;
+						climatise = 0;
+					}else {
+						System.out.println("");
+						System.out.println("Réponse invalide, veuillez recommencer");
+						System.out.println("");
+					}
+				}
+				
+				// Choisir le type de boite
+				exit2 = false;
+				while(!exit2) {
+					System.out.println("");
+					System.out.println("Choisir le type de de boite :");
+					System.out.println("1: Automatique");
+					System.out.println("2: Manuelle");
+					
+					input = sc.nextLine();
+					
+					switch(input) {
+						case "1" : tb = TypeBoite.Automatique; exit2 = true; break;
+						case "2" : tb = TypeBoite.Manuelle; exit2 = true; break;
+						default : System.out.println("Choix invalide, veuillez recommencer.");
+					}
+				}
+				
+				exit2 = false;
+				
+				while(!exit2) {
+					System.out.println("");
+					System.out.println("Choisir le type de carburant :");
+					System.out.println("1: Electrique");
+					System.out.println("2: Gazole");
+					System.out.println("3: Essence");
+					System.out.println("4: Gpl");
+					System.out.println("5: Sp95");
+					
+					input = sc.nextLine();
+					
+					switch(input) {
+						case "1" : tc = TypeCarburant.Electrique; exit2 = true; break;
+						case "2" : tc = TypeCarburant.Gazole; exit2 = true; break;
+						case "3" : tc = TypeCarburant.Essence; exit2 = true; break;
+						case "4" : tc = TypeCarburant.Gpl; exit2 = true; break;
+						case "5" : tc = TypeCarburant.Sp95; exit2 = true; break;
+						default : System.out.println("Choix invalide, veuillez recommencer.");
+					}
+				}
+				
+				exit2 = false;
+				
+				while(!exit2) {
+					System.out.println("");
+					System.out.println("Choisir l'agence du véhicule :");
+					
+					for(Agence a : da.getAgences()) {
+						System.out.println(a.getIdAgence() + ": " + a.getNom());
+					}
+					
+					input = sc.nextLine();
+					
+					try {
+						idAgence = Integer.parseInt(input);
+						exit2 = true;
+						
+					}catch(Exception e) {
+						System.out.println("Erreur dans le choix de l'agence, veuillez recommencer");
+					}
+					
+				}
+				
+				Vehicule nouveauV = new Vehicule(-1, matricule, marque, modele, kilometrage, climatise, 100, tb.toString(), tc.toString(),idCat, idAgence);
+				da.addNewVehicule(nouveauV);
+				
+			}else {
+				System.out.println("Erreur dans l'entrée des données, veuillez recommencer");
+			}
+		}
+	}
+	
+	private static void supprimerVehicule(Scanner sc, DataAccess da) {
+		System.out.println("");
+		System.out.println("Ajout d'un nouveau véhicule");
+		System.out.println("");
+		
+		System.out.println("Indiquer le matricule du véhicule à supprimer :");
+		
+		String input = sc.nextLine();
+		
+		da.deleteVehicule(input);
+		
+	}
+	
+	private static void modificationVehicule(Scanner sc, DataAccess da) {
+		System.out.println("");
+		System.out.println("Modification d'un véhicule");
+		System.out.println("");
+		
+		System.out.println("Indiquer le matricule du véhicule à modifier :");
+		
+		boolean exit4 = false;
+		while(!exit4) {
+			String input = sc.nextLine();
+			try {
+				Vehicule vehiculeToModify = da.getVehiculeByMatricule(input).get(0);
+				exit4 = true;
+				boolean exit3 = false;
+				while(!exit3) {
+					System.out.println("");
+					System.out.println("Que souhaitez-vous modifier ?");
+					System.out.println("1: Informations du véhicules");
+					System.out.println("2: Agence associé au véhicule");
+					System.out.println("3: Modification(s) terminée(s)");
+					System.out.println("0: Annulation des modifications");
+					input = sc.nextLine();
+					switch(input) {
+						case "1" :  boolean exit = false;
+									while(!exit) {
+										System.out.println("Indiquer les informations du véhicule : matricule, marque, modele, kilometrage");
+										System.out.println("ex : UB-235-FB,Renault,Zoe,5000");
+										System.out.println("");
+										input = sc.nextLine();
+									
+										String[] inputs = input.split(",");
+										if(inputs.length == 4) {
+											exit = true;
+											vehiculeToModify.setMatricule(inputs[0]);
+											vehiculeToModify.setMarque(inputs[1]);
+											vehiculeToModify.setModele(inputs[2]);
+											vehiculeToModify.setKilometrage(Integer.parseInt(inputs[3]));
+											boolean exit2 = false;
+											while(!exit2) {
+												System.out.println("");
+												System.out.println("Le véhicule est-il climatisé ? (Y/N)");
+												System.out.println("");
+												
+												input = sc.nextLine();
+												
+												if(input.equals("Y")) {
+													exit2 = true;
+													vehiculeToModify.setClimatise(true);
+												}else if (input.equals("N")){
+													exit2 = true;
+													vehiculeToModify.setClimatise(false);
+												}else {
+													System.out.println("");
+													System.out.println("Réponse invalide, veuillez recommencer");
+													System.out.println("");
+												}
+											}
+											
+											// Choisir le type de boite
+											exit2 = false;
+											while(!exit2) {
+												System.out.println("");
+												System.out.println("Choisir le type de de boite :");
+												System.out.println("1: Automatique");
+												System.out.println("2: Manuelle");
+												
+												input = sc.nextLine();
+												
+												switch(input) {
+													case "1" : vehiculeToModify.setTypeBoite(TypeBoite.Automatique); exit2 = true; break;
+													case "2" : vehiculeToModify.setTypeBoite(TypeBoite.Manuelle); exit2=true; break;
+													default : System.out.println("Choix invalide, veuillez recommencer."); break;
+													
+												}
+											}
+											
+											exit2 = false;
+											
+											while(!exit2) {
+												System.out.println("");
+												System.out.println("Choisir le type de carburant :");
+												System.out.println("1: Electrique");
+												System.out.println("2: Gazole");
+												System.out.println("3: Essence");
+												System.out.println("4: Gpl");
+												System.out.println("5: Sp95");
+												
+												input = sc.nextLine();
+												
+												switch(input) {
+													case "1" : vehiculeToModify.setTypeCarburant(TypeCarburant.Electrique); exit2 = true; break;
+													case "2" : vehiculeToModify.setTypeCarburant(TypeCarburant.Gazole); exit2 = true; break;
+													case "3" : vehiculeToModify.setTypeCarburant(TypeCarburant.Essence); exit2 = true; break;
+													case "4" : vehiculeToModify.setTypeCarburant(TypeCarburant.Gpl); exit2 = true; break;
+													case "5" : vehiculeToModify.setTypeCarburant(TypeCarburant.Sp95); exit2 = true; break;
+													default : System.out.println("Choix invalide, veuillez recommencer."); break;
+												}
+											}
+											
+										}else {
+											System.out.println("Nombre d'arguments invalide, veuillez recommencer.");
+										} 
+									} 
+									break;
+						
+						case "2" : boolean exit2 = false;
+									while(!exit2) {
+										System.out.println("");
+										System.out.println("Choisir l'agence du véhicule :");
+										
+										for(Agence a : da.getAgences()) {
+											System.out.println(a.getIdAgence() + ": " + a.getNom());
+										}
+										
+										input = sc.nextLine();
+										
+										try {
+											vehiculeToModify.setIdAgence(Integer.parseInt(input));
+											exit2 = true;
+											
+										}catch(Exception e) {
+											System.out.println("Erreur dans le choix de l'agence, veuillez recommencer");
+										}
+										
+									} break;
+									
+						case "3" : exit3 = true;
+								   da.updateVehicule(vehiculeToModify);
+								   break;
+						case "0" : System.out.println("Annulation de la modification");
+								   return;
+						
+								   
+						default : System.out.println("");
+						          System.out.println("Choix invalide, veuillez recommencer.");
+						          System.out.println("");
+					}
+				}
+				
+			}catch(Exception e) {
+				System.out.println("Une erreur est survenu, veuillez recommencer.");
+			}
+		}
 	}
 	
 	/*************************************************************************************/

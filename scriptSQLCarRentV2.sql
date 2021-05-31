@@ -130,10 +130,10 @@ CREATE TABLE Vehicule(
         climatise             Bool NOT NULL ,
         consommationCarburant Int NOT NULL ,
         typeBoite             Enum ("Automatique","Manuelle") NOT NULL ,
-        typeCarburant         Enum ("Gazole","Essence","SP95","GPL","Electrique") NOT NULL ,
+        typeCarburant         Enum ("Gazole","Essence","Sp95","Gpl","Electrique") NOT NULL ,
         idAgence              Int NOT NULL ,
         idCategorie           Int NOT NULL
-	,CONSTRAINT Vehicule_PK PRIMARY KEY (idVehicule)
+	,CONSTRAINT Vehicule_PK PRIMARY KEY (idVehicule, matricule)
 
 	,CONSTRAINT Vehicule_Agence_FK FOREIGN KEY (idAgence) REFERENCES Agence(idAgence)
 	,CONSTRAINT Vehicule_Categorie0_FK FOREIGN KEY (idCategorie) REFERENCES Categorie(idCategorie)
