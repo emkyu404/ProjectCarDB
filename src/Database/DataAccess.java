@@ -500,6 +500,24 @@ public class DataAccess {
 		}
 	}
 	
+	public void updateAdresse(Adresse ad) {	
+		try {
+			String sql = "UPDATE ADRESSE SET RUE = ?, ville = ?, codePostal = ? WHERE idAdresse = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, ad.getRue());
+			ps.setString(2, ad.getVille());
+			ps.setInt(3, ad.getCodePostal());
+			ps.setInt(4, ad.getIdAdresse());
+			
+			int row = ps.executeUpdate();
+			
+			System.out.println("La modification de l'adresse " + ad.getRue() + " a bien été effectué");
+			
+		} catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+	}
+	
 	public List<Client> getClient(){
 		System.out.println("----- Liste des clients -----");
 		ArrayList<Client> listeClients = new ArrayList<>();
@@ -540,13 +558,13 @@ public class DataAccess {
 	}
 	
 	public List<Client> getClientRenting(){
-		System.out.println("----- Liste des clients entrain de louer -----");
+		System.out.println("----- Liste des clients en train de louer -----");
 		ArrayList<Client> listeClients = new ArrayList<>();
 		
 		try {
-			Statement s = conn.createStatement();
-			String sql = "SELECT * from CLIENT WHERE idClient IN (SELECT idClient FROM LOUER WHERE CURDATE() BETWEEN dateDebut and dateFin);";
-			ResultSet res = s.executeQuery(sql);
+			String sql = "SELECT * from CLIENT WHERE idClient IN (SELECT idClient FROM LOUER WHERE dateRetour is null)";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ResultSet res = ps.executeQuery();
 			
 			while(res.next()) {
 				listeClients.add(new Client(res.getInt("idClient"), res.getString("nom"), res.getString("prenom"), res.getString("email"), res.getInt("numTelephone"), res.getDate("dateSouscription"), res.getInt("idAdresse"), res.getInt("idPFidelite")));
@@ -564,7 +582,7 @@ public class DataAccess {
 		ArrayList<Client> listeClients = new ArrayList<>();
 		
 		try {
-			String sql = "SELECT * FROM Client as C INNER JOIN Louer as L  on L.idClient = C.idClient WHERE idVehicule = ?";
+			String sql = "SELECT DISTINCT C.idClient, C.nom, C.prenom, C.email, C.numTelephone, C.dateSouscription,C.idAdresse,C.idPFidelite FROM Client as C INNER JOIN Louer as L  on L.idClient = C.idClient WHERE idVehicule = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, v.getIdVehicule());
 			ResultSet res = ps.executeQuery();

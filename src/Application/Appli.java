@@ -164,78 +164,29 @@ public class Appli {
 			
 			switch(input) {
 				case "1" : 
-							System.out.println("Indiquez les informations de l'adresse du client avec le format suivant : rue,ville,codePostal");
-							String adresse = sc.nextLine();
-							String[] adresseInfos = adresse.split(",");
-							//idAdresse = 100 est juste un nombre aléatoire car ce n'est pas cet ID qui sera inséré dans la base de donnée
-							Adresse ad = new Adresse(100, adresseInfos[0], adresseInfos[1], Integer.parseInt(adresseInfos[2]));
-							da.addAdresse(ad);
-							
-							
-							System.out.println("Indiquez les informations du nouveau client avec le format suivant : nom,prenom,email,numTelephone");
-							String client = sc.nextLine();
-							String[] clientInfos = client.split(",");
-							int idAdresse = da.getIdAdresse(ad);
-							
-							Client newclient = new Client(100, clientInfos[0], clientInfos[1], clientInfos[2], Integer.parseInt(clientInfos[3]), null, idAdresse,-1);
-							da.addNewClient(newclient);
+							ajoutClient(sc, da);
 							break;
-					
 				case "2" : 
-					
+							modificationClient(sc,da);
+							break;
 				case "3" : 
-							System.out.println("Indiquez le nom du client que vous voulez supprimer");
-							String nom = sc.nextLine();
-							
-							List<Client> listeClient = da.getClient();
-							List<Adresse> listeAdresse = da.getAdresses();
-							
-							for(Client c : listeClient) {
-								if(nom.equals(c.getNom())) {
-									da.deleteClient(c);
-									
-									for(Adresse adr : listeAdresse) {
-										if(adr.getIdAdresse() == c.getIdAdresse()) {
-											da.deleteAdresse(adr);
-										}
-									}
-								}
-							}
-							
-							
+							suppressionClient(sc,da);
 							break;
 				case "4" : 
-							da.getClient();
+							listerClientParOrdreAlphabetique(sc,da);
 							break;
-					
 				case "5" : 
-							System.out.println("Indiquez le nom d'un client");
-							String clientName = sc.nextLine();
-							da.getClientByName(clientName);
+							rechercherClientParNom(sc,da);
 							break;
 				case "6" : 
-						    da.getClientRenting();
-						    break;
-						    
+						    rechercherClientQuiLoue(sc, da);
+						    break;	    
 				case "7" : 
-							System.out.println("Indiquez le modèle du véhicule");
-							String modele = sc.nextLine();
-							List<Vehicule> listeVehicules = da.getVehicules();
-							Vehicule vehiculeLoue = null;
-							
-							for(Vehicule v : listeVehicules) {
-								if(v.getModele().equals(modele)) {
-									vehiculeLoue = v;
-								}
-							}
-							
-							da.getClientWHR(vehiculeLoue);
+							rechercherClientParVehiculeLoue(sc,da);
 							break;
-				    
 				case "0" :  
 							exit = true;
-							break;
-							
+							break;	
 				default :  	
 							Appli.ErreurMenu();
 							break;
@@ -244,6 +195,164 @@ public class Appli {
 		}
 		System.out.println("Fin de la gestion clients");
 		System.out.println("");
+	}
+	
+	public static void ajoutClient(Scanner sc, DataAccess da) {
+		System.out.println("Indiquez les informations de l'adresse du client avec le format suivant : rue,ville,codePostal");
+		String adresse = sc.nextLine();
+		String[] adresseInfos = adresse.split(",");
+		//idAdresse = 100 est juste un nombre aléatoire car ce n'est pas cet ID qui sera inséré dans la base de donnée
+		Adresse ad = new Adresse(100, adresseInfos[0], adresseInfos[1], Integer.parseInt(adresseInfos[2]));
+		da.addAdresse(ad);
+		
+		
+		System.out.println("Indiquez les informations du nouveau client avec le format suivant : nom,prenom,email,numTelephone");
+		String client = sc.nextLine();
+		String[] clientInfos = client.split(",");
+		int idAdresse = da.getIdAdresse(ad);
+		
+		Client newclient = new Client(100, clientInfos[0], clientInfos[1], clientInfos[2], Integer.parseInt(clientInfos[3]), null, idAdresse,-1);
+		da.addNewClient(newclient);
+	}
+	
+	public static void modificationClient(Scanner sc, DataAccess da){
+		System.out.println("Souhaitez-vous modifier les informations du client ou les informations de son adresse ? ");
+		System.out.println("1: Changer l'adresse");
+		System.out.println("2: Changer les informations client");
+		String choix = sc.nextLine();
+		
+		switch(choix) {
+				case "1":
+							try {
+								System.out.println("Indiquez la rue de l'adresse à modifier");
+								String rue = sc.nextLine();
+								Adresse ad = null;
+								List<Adresse> listeAdresse = da.getAdresses();
+								
+								for(Adresse adr : listeAdresse) {
+									if(adr.getRue().equals(rue)) {
+										ad = adr;
+									}
+								}
+								
+								System.out.println("Voici les informations de l'adresse : ");
+								System.out.println("rue : " + ad.getRue() + " ville : " + ad.getVille() + " codePostal : " + ad.getCodePostal());
+								System.out.println("");
+								System.out.println("Indiquez les nouvelles informations suivant le format : rue,ville,codepostal");
+								
+								String adresse = sc.nextLine();
+								String[] adresseInfos = adresse.split(",");
+								Adresse newAdresse = new Adresse(ad.getIdAdresse(), adresseInfos[0], adresseInfos[1], Integer.parseInt(adresseInfos[2]));
+								da.updateAdresse(newAdresse);
+								break;
+							}catch(Exception e) {
+								System.err.println("Rue introuvable \n Erreur : \n");
+								System.err.println(e.getMessage());
+								System.exit(1);
+							}
+							
+				case "2":
+							try {
+								System.out.println("Indiquez le nom et le prenom du client à modifier suivant le format nom,prenom");
+								String client = sc.nextLine();
+								String[] nomEtPrenom = client.split(",");
+								Client c = null;
+								List<Client> listeClient = da.getClient();
+								
+								for(Client cli : listeClient) {
+									if(cli.getNom().equals(nomEtPrenom[0]) && cli.getPrenom().equals(nomEtPrenom[1])) {
+										c = cli;
+									}
+								}
+								
+								System.out.println("Voici les informations du client : ");
+								System.out.println("nom : " + c.getNom() + " prenom : " + c.getPrenom() + " email : " + c.getEmail() + " numTelephone : " + c.getNumTelephone());
+								System.out.println("");
+								System.out.println("Indiquez les nouvelles informations suivant le format : nom,prenom,email,numTelephone");
+								
+								String clientInf = sc.nextLine();
+								String[] clientInfos = clientInf.split(",");
+								Client newClient = null;
+								
+								if(c.getIdPFidelite() == 0 && c.getDateSouscription() == null) {
+									newClient = new Client(c.getIdClient(), clientInfos[0], clientInfos[1], clientInfos[2], Integer.parseInt(clientInfos[3]),c.getIdAdresse());
+								}else {
+									newClient = new Client(c.getIdClient(), clientInfos[0], clientInfos[1], clientInfos[2], Integer.parseInt(clientInfos[3]),c.getDateSouscription(),c.getIdAdresse(),c.getIdPFidelite());
+								}
+								
+								da.updateClient(newClient);
+								break;
+							}catch(Exception e) {
+								System.err.println("Client introuvable \n Erreur : \n");
+								System.err.println(e.getMessage());
+								System.exit(1);
+							}
+							
+				default:
+							Appli.ErreurMenu();
+							break;
+		}	
+	}
+	
+	public static void suppressionClient(Scanner sc, DataAccess da) {
+		System.out.println("Indiquez le nom du client que vous voulez supprimer");
+		String nom = sc.nextLine();
+		
+		List<Client> listeClient = da.getClient();
+		List<Adresse> listeAdresse = da.getAdresses();
+		
+		for(Client c : listeClient) {
+			if(nom.equals(c.getNom())) {
+				da.deleteClient(c);
+				
+				for(Adresse adr : listeAdresse) {
+					if(adr.getIdAdresse() == c.getIdAdresse()) {
+						da.deleteAdresse(adr);
+					}
+				}
+			}
+		}
+	}
+	
+	public static void listerClientParOrdreAlphabetique(Scanner sc, DataAccess da) {
+		List<Client> listeClient = da.getClient();
+		for(Client c : listeClient) {
+			System.out.println(c.toString());
+		}
+	}
+	
+	public static void rechercherClientParNom(Scanner sc, DataAccess da) {
+		System.out.println("Indiquez le nom d'un client");
+		String clientName = sc.nextLine();
+		List<Client> listeC = da.getClientByName(clientName);
+		for(Client c : listeC) {
+			System.out.println(c.toString());
+		}
+	}
+	
+	public static void rechercherClientQuiLoue(Scanner sc, DataAccess da) {
+		List<Client> listeC = da.getClientRenting();
+		for(Client c : listeC) {
+			System.out.println(c.toString());
+		}
+	}
+	
+	public static void rechercherClientParVehiculeLoue(Scanner sc, DataAccess da) {
+		System.out.println("Indiquez la matricule du véhicule");
+		String matricule = sc.nextLine();
+		List<Vehicule> listeVehicules = da.getVehicules();
+		Vehicule vehiculeLoue = null;
+		
+		for(Vehicule v : listeVehicules) {
+			if(v.getMatricule().equals(matricule)) {
+				vehiculeLoue = v;
+			}
+		}
+		
+		List<Client> clients = da.getClientWHR(vehiculeLoue);
+		for(Client c : clients) {
+			System.out.println(c.toString());
+		}
 	}
 	/**************************************************************************************/
 	
@@ -278,11 +387,9 @@ public class Appli {
 						    
 				case "4" : Appli.AnnulationReservation(sc, da);
 							break;
-							
 				case "0" :  
 							exit = true;
-							break;
-							
+							break;	
 				default :  	
 							Appli.ErreurMenu();
 							break;

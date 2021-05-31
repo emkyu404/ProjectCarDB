@@ -71,4 +71,8 @@ public class Client {
 	public String toString() {
 		return "Nom : " + nom + "Prenom : " + prenom + "Email : " + email + "Télephone : " + numTelephone;
 	}
+
+	public void setIdPFidelite(int i) {
+		this.idPFidelite = i;
+	}
 }
