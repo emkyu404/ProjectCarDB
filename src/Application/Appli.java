@@ -73,6 +73,8 @@ public class Appli {
 		}
 		
 		System.out.println("Fin du programme.");
+		//Fermeture de l'accès à la database
+		da.closeConnection();
 		System.exit(1);
 		}catch(SQLException e) {
 			System.err.println("L'application Rentcar n'a pas pu se connecter à la base de donnée. \n Erreur : \n");
@@ -125,6 +127,7 @@ public class Appli {
 			
 			}
 		}
+		System.out.println("");
 		System.out.println("Fin de la gestion des ressources");
 		System.out.println("");
 		
@@ -198,8 +201,50 @@ public class Appli {
 	
 	/******************************** APPLI DEVIS/LOCATION ********************************/
 	private static void GestionDevisLocation(Scanner sc, DataAccess da) {
+		System.out.println(Appli.SEPARATOR);
+		System.out.println("Debut de la gestion des locations");
+		System.out.println(Appli.SEPARATOR);
 		
-		/*Tout ce qui est reservation et location d'un vehicule*/
+		boolean exit = false;
+		
+		while(!exit) {
+			System.out.println("Que souhaitez-vous faire ?");
+			System.out.println("");
+			System.out.println("1: Ajouter une réservation");
+			System.out.println("2: Ajouter une location");
+			System.out.println("3: Retour d'une location");
+			System.out.println("4: Annulation d'une réservation");
+			System.out.println("5: Calcul du devis d'une location terminé");
+			System.out.println("0: Retour");
+			
+			String input = sc.nextLine();
+			
+			switch(input) {
+				case "1" : Appli.RéservationVehicule(sc, da);
+							break;
+					
+				case "2" : Appli.LocationVehicule(sc, da);
+							break;
+							
+				case "3" : Appli.RetourVehicule(sc, da);
+						    break;
+						    
+				case "4" : Appli.AnnulationReservation(sc, da);
+							break;
+							
+				case "0" :  
+							exit = true;
+							break;
+							
+				default :  	
+							Appli.ErreurMenu();
+							break;
+			
+			}
+		}
+		System.out.println("Fin de la gestion clients");
+		System.out.println("");
+		
 	}
 	
 	/* Réservation d'un véhicule */
@@ -255,7 +300,7 @@ public class Appli {
 			Date dateF = Appli.DateParser(dates[1]);
 			
 				if(idCat != 0) {
-					List<Vehicule> listeVehiculesDispo = da.getVehiculesAvailableReservation(dateF, dateF, idCat);
+					List<Vehicule> listeVehiculesDispo = da.getVehiculesAvailableReservation(dateD, dateF, idCat);
 					if(listeVehiculesDispo.size() > 0) {
 						
 						System.out.println("");
@@ -283,6 +328,7 @@ public class Appli {
 								input = sc.nextLine();
 								int idC = Integer.parseInt(input);
 								da.addReservation(idC, idV, dateD, dateF);
+								exit = true;
 								
 							}else {
 									System.out.println("");
@@ -294,6 +340,7 @@ public class Appli {
 						
 					}else {
 						System.out.println("Aucun véhicule n'est disponible selon les critères demandés");
+						exit = true;
 					}
 				}
 				
@@ -306,20 +353,155 @@ public class Appli {
 		
 	}
 	
-	public static void LocationVehicule() {
+	public static void LocationVehicule(Scanner sc, DataAccess da) {
 		// Indiquer le couple idc, idv, dated, datef pour créer un tuple dans la table louer parmis
 		System.out.println("");
-		System.out.println("Locati");
+		System.out.println("Location d'un véhicule");
 		System.out.println("");
+		
+		System.out.println("Indiquer les informations suivante : idClient, idVehicule, dateD, dateF (format des dates : YYYY-MM-DD)");
+		System.out.println("ex : 1 2 2021-04-05 2021-06-03");
+		System.out.println("");
+		String input = sc.nextLine();
+		
+		String[] inputs = input.split(" ");
+		int idC = Integer.parseInt(inputs[0]);
+		int idV = Integer.parseInt(inputs[1]);
+		Date dateD = Appli.DateParser(inputs[2]);
+		Date dateF = Appli.DateParser(inputs[3]);
+		
+		if(da.reservationExist(idC, idV, dateD, dateF)) {
+			boolean exit = false;
+			while(!exit) {
+				System.out.println("");
+				System.out.println("Souhaitez-vous bénéficier de l'assurance ? (Y/N)");
+				System.out.println("");
+				
+				input = sc.nextLine();
+				
+				if(input.equals("Y")) {
+					exit = true;
+					da.addLocation(idC, idV, dateD, dateF, true);
+				}else if (input.equals("N")){
+					exit = true;
+					da.addLocation(idC, idV, dateD, dateF, false);
+				}else {
+					System.out.println("");
+					System.out.println("Réponse invalide, veuillez recommencer");
+					System.out.println("");
+				}
+			}
+		}else {
+			System.out.println("La réservation indiqué n'existe pas.");
+		}
+	}
+	
+	public static void RetourVehicule(Scanner sc, DataAccess da) {
+		System.out.println("");
+		System.out.println("Retour d'un véhicule");
+		System.out.println("");
+		
+		System.out.println("Indiquer les informations suivante : idClient, idVehicule, dateD, dateF (format des dates : YYYY-MM-DD)");
+		System.out.println("ex : 1 2 2021-04-05 2021-06-03");
+		System.out.println("");
+		String input = sc.nextLine();
+		
+		String[] inputs = input.split(" ");
+		int idC = Integer.parseInt(inputs[0]);
+		int idV = Integer.parseInt(inputs[1]);
+		Date dateD = Appli.DateParser(inputs[2]);
+		Date dateF = Appli.DateParser(inputs[3]);
+		if(da.locationExist(idC, idV, dateD, dateF)) {
+			boolean exit = false;
+			boolean endommage = false;
+			int montantCarburant = 0;
+			while(!exit) {
+				System.out.println("");
+				System.out.println("Le véhicule est-il endommagé ? (Y/N)");
+				System.out.println("");
+				
+				input = sc.nextLine();
+				
+				if(input.equals("Y")) {
+					exit = true;
+					endommage = true;
+				}else if (input.equals("N")){
+					exit = true;
+					endommage = false;
+				}else {
+					System.out.println("");
+					System.out.println("Réponse invalide, veuillez recommencer");
+					System.out.println("");
+				}
+			}
+			
+			exit = false;
+			
+			while(!exit) {
+				System.out.println("");
+				System.out.println("Indiquez le montant de carburant restant (entre 0 et 100)");
+				System.out.println("");
+				
+				input = sc.nextLine();
+				
+				montantCarburant = Integer.parseInt(input);
+				
+				if(montantCarburant <= 100 && montantCarburant >= 0) {
+					exit = true;
+					da.endLocation(idC,idV,dateD,dateF,endommage,montantCarburant);
+				} else {
+					System.out.println("");
+					System.out.println("Valeur indiqué invalide, veuillez recommencer.");
+					System.out.println("");
+				}
+			}
+		}else {
+			System.out.println("La location indiqué n'existe pas.");
+		}
 		
 	}
 	
-	public static void RetourVehicule() {
-		// Indiquer le couple idc, idv, dated, datef etc ... pour terminer la location (modification de la dateRetour)
-		// Affichage du montant de la location en +
-	}
-	
-	public static void AnnulationReservation() {
+	public static void AnnulationReservation(Scanner sc, DataAccess da) {
+		System.out.println("");
+		System.out.println("Annulation d'une réservation");
+		System.out.println("");
+		
+		System.out.println("Indiquer les informations suivante : idClient, idVehicule, dateD, dateF (format des dates : YYYY-MM-DD");
+		System.out.println("ex : 1 2 2021-04-05 2021-06-03");
+		System.out.println("");
+		
+		String input = sc.nextLine();
+		String[] inputs = input.split(" ");
+		int idC = Integer.parseInt(inputs[0]);
+		int idV = Integer.parseInt(inputs[1]);
+		Date dateD = Appli.DateParser(inputs[2]);
+		Date dateF = Appli.DateParser(inputs[3]);
+		
+		if(da.reservationExist(idC, idV, dateD, dateF)) {
+			boolean exit = false;
+			while(!exit) {
+				System.out.println("Souhaitez-vous annuler la réservation du client " + idC + "pour le véhicule" + idV + " du " + dateD + " au " + dateF + " ? (Y/N)");
+				input = sc.nextLine();
+				
+				if(input.equals("Y")) {
+					exit = true;
+					da.cancelReservation(idC, idV, dateD, dateF);
+					
+				}else if(input.equals("N")) {
+					exit = true;
+					System.out.println("Annulation de la réservation non effective.");
+				}else {
+					System.out.println("");
+					System.out.println("Valeur indiqué invalide, veuillez recommencer.");
+					System.out.println("");
+				}
+			}
+			
+		}else {
+			System.out.println("La réservation indiqué n'existe pas.");
+		}
+		
+		
 		
 	}
 	

@@ -192,7 +192,7 @@ CREATE TABLE louer(
         assurance        Bool NOT NULL ,
         endommage        Bool ,
         carburantRestant Int ,
-        dateRetour       Date NOT NULL
+        dateRetour       Date
 	,CONSTRAINT louer_PK PRIMARY KEY (idVehicule,idClient,dateDebut,dateFin)
 
 	,CONSTRAINT louer_Vehicule_FK FOREIGN KEY (idVehicule) REFERENCES Vehicule(idVehicule)

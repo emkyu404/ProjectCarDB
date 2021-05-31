@@ -200,7 +200,6 @@ public class DataAccess {
 	public List<Vehicule> getVehiculesAvailableReservation(Date dateD, Date dateF, int idCat){
 		System.out.println("----- Liste des véhicules disponible par catégorie du "+ dateD + " au " + dateF + "-----");
 		ArrayList<Vehicule> listeVehicules = new ArrayList<>();
-		this.getCategories(); // Mise à jour des catégories dans l'application
 		
 		try {
 			String sql = "SELECT * from VEHICULE WHERE idVehicule NOT IN (SELECT idVehicule FROM LOUER WHERE dateDebut BETWEEN ? and ?) AND idVehicule NOT IN (SELECT idVehicule FROM RESERVER WHERE dateDebut BETWEEN ? and ?) AND idVehicule NOT IN (SELECT idVehicule FROM LOUER WHERE dateFin BETWEEN ? and ?) AND idVehicule NOT IN (SELECT idVehicule FROM RESERVER WHERE dateFin BETWEEN ? and ?) AND idCategorie = ?";
@@ -209,8 +208,12 @@ public class DataAccess {
 			ps.setDate(2, dateF);
 			ps.setDate(3, dateD);
 			ps.setDate(4, dateF);
-			ps.setInt(5, idCat);
-			ResultSet res = ps.executeQuery(sql);
+			ps.setDate(5, dateD);
+			ps.setDate(6, dateF);
+			ps.setDate(7, dateD);
+			ps.setDate(8, dateF);
+			ps.setInt(9, idCat);
+			ResultSet res = ps.executeQuery();
 			
 			while(res.next()) {
 				listeVehicules.add(new Vehicule(res.getInt("idVehicule"), res.getString("matricule"), res.getString("marque"), res.getString("modele"), res.getInt("kilometrage"), res.getInt("climatise"), res.getInt("consommationCarburant"), res.getString("typeBoite"), res.getString("typeCarburant"), res.getInt("idCategorie"), res.getInt("idAgence")));
@@ -277,6 +280,75 @@ public class DataAccess {
 			int row = ps.executeUpdate();
 			System.out.println("Ajout de la réservation du véhicule " + idV + " pour le client "+ idC + " du " + dateD + " au " + dateF);
 		} catch(SQLException e){
+			System.out.println("Erreur : " + e.getMessage());
+		}
+	}
+	
+	public void cancelReservation(int idC, int idV, Date dateD, Date dateF) {
+		System.out.println("----- Annulation d'une réservation -----");
+		
+		try {
+			String sql = "DELETE FROM RESERVER WHERE idClient = ? AND idVehicule = ? AND dateDebut = ? AND dateFIN = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, idC);
+			ps.setInt(2, idV);
+			ps.setDate(3, dateD);
+			ps.setDate(4, dateF);
+			
+			int row2 = ps.executeUpdate();
+			
+			System.out.println("Suppression de la réservation effectué.");
+		} catch(SQLException e){
+			System.out.println("Erreur : " + e.getMessage());
+		}
+	}
+	
+	public void addLocation(int idC, int idV, Date dateD, Date dateF, boolean assurance) {
+		System.out.println("----- Ajout d'une location -----");
+		
+		try {
+			String sql = "INSERT INTO LOUER (idClient, idVehicule, dateDebut, dateFin, assurance) VALUES (?,?,?,?,?)";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, idC);
+			ps.setInt(2, idV);
+			ps.setDate(3, dateD);
+			ps.setDate(4, dateF);
+			ps.setBoolean(5, assurance);
+			int row = ps.executeUpdate();
+			
+			System.out.println("Ajout de la location du véhicule " + idV + " pour le client "+ idC + " du " + dateD + " au " + dateF);
+			
+			String sql2 = "DELETE FROM RESERVER WHERE idClient = ? AND idVehicule = ? AND dateDebut = ? AND dateFIN = ?";
+			PreparedStatement ps2 = conn.prepareStatement(sql2);
+			ps2.setInt(1, idC);
+			ps2.setInt(2, idV);
+			ps2.setDate(3, dateD);
+			ps2.setDate(4, dateF);
+			
+			int row2 = ps.executeUpdate();
+			
+			System.out.println("Suppression de la réservation correspondante");
+		} catch(SQLException e){
+			System.out.println("Erreur : " + e.getMessage());
+		}
+	}
+	
+	public void endLocation(int idC, int idV, Date dateD, Date dateF, boolean endo, int mtnCarb) {
+		System.out.println("----- Retour de la location -----");
+		try {
+			String sql = "UPDATE LOUER SET endommage = ?, carburantRestant = ?, dateRetour = CURDATE() WHERE idClient = ? AND idVehicule = ? AND dateDebut = ? AND dateFin = ? ";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setBoolean(1, endo);
+			ps.setInt(2, mtnCarb);
+			ps.setInt(3, idC);
+			ps.setInt(4, idV);
+			ps.setDate(5, dateD);
+			ps.setDate(6, dateF);
+			
+			int row = ps.executeUpdate();
+			System.out.println("Retour de la location validé.");
+			
+		}catch(SQLException e) {
 			System.out.println("Erreur : " + e.getMessage());
 		}
 	}
@@ -499,6 +571,71 @@ public class DataAccess {
 		}
 		
 		return listeAgence;
+	}
+	
+	public boolean reservationExist(int idc, int idv, Date dateD, Date dateF) {
+		System.out.println("------ Vérification qu'une réservation existe -----");
+		boolean result = false;
+		try {
+			String sql = "SELECT * FROM RESERVER WHERE idClient = ? AND idVehicule = ? AND dateDebut = ? AND dateFin = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, idc);
+			ps.setInt(2, idv);
+			ps.setDate(3, dateD);
+			ps.setDate(4, dateF);
+			ResultSet res = ps.executeQuery();
+			
+			int cpt = 0;
+			while(res.next()) {
+				cpt++;
+			}
+			
+			if(cpt == 1) {
+				result = true;
+			}else {
+				result = false;
+			}
+		}catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+		return result;
+	}
+	
+	public boolean locationExist(int idc, int idv, Date dateD, Date dateF) {
+		System.out.println("------ Vérification qu'une réservation existe -----");
+		boolean result = false;
+		try {
+			String sql = "SELECT * FROM LOUER WHERE idClient = ? AND idVehicule = ? AND dateDebut = ? AND dateFin = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, idc);
+			ps.setInt(2, idv);
+			ps.setDate(3, dateD);
+			ps.setDate(4, dateF);
+			ResultSet res = ps.executeQuery();
+			
+			int cpt = 0;
+			while(res.next()) {
+				cpt++;
+			}
+			
+			if(cpt == 1) {
+				result = true;
+			}else {
+				result = false;
+			}
+		}catch(SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+		return result;
+	}
+	
+	public void closeConnection() {
+		try {
+			this.conn.close();
+			System.out.println("Déconnexion à la base de donnée.");
+		} catch (SQLException e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
 	}
 	
 }
