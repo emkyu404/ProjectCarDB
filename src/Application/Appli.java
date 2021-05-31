@@ -262,7 +262,6 @@ public class Appli {
 			System.out.println("2: Ajouter une location");
 			System.out.println("3: Retour d'une location");
 			System.out.println("4: Annulation d'une réservation");
-			System.out.println("5: Calcul du devis d'une location terminé");
 			System.out.println("0: Retour");
 			
 			String input = sc.nextLine();
